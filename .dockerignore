@@ -17,6 +17,4 @@ compose.yaml
 compose-health-test.yaml
 Dockerfile
 README
-server-dev-only.cert
-server-dev-only.key
  .env.healthcheck.testing
