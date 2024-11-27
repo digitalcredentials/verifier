@@ -1,7 +1,7 @@
-# isomorphic-lib-template Changelog
+# verifier-service Changelog
 
-## 1.0.0 - TBD
-
+## 0.1.0 - 2024-11-27
 ### Added
+- first release
 
-- Initial commit.
+For previous history, see Git commits.
