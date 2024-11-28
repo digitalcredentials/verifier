@@ -6,8 +6,8 @@ import errorHandler from './middleware/errorHandler.js'
 import errorLogger from './middleware/errorLogger.js'
 import invalidPathHandler from './middleware/invalidPathHandler.js'
 import VerificationException from './VerificationException.js'
-import verify from './verify.js'
-import getSignedVC from './test-fixtures/vc.js'
+import { verifyCredential } from './verify.js'
+import { getSignedVC } from './test-fixtures/vc.js'
 
 export async function build() {
   var app = express()
@@ -24,7 +24,9 @@ export async function build() {
         `${req.protocol}://${req.headers.host}/credentials/verify`,
         getSignedVC()
       )
-      if (!data.proof)
+      console.log('the verification result in healthz:')
+      console.log(data)
+      if (!data.verified)
         throw new VerificationException(
           503,
           'transaction-service healthz failed'
@@ -32,7 +34,7 @@ export async function build() {
     } catch (e) {
       console.log(`exception in healthz: ${JSON.stringify(e)}`)
       return res.status(503).json({
-        error: `signing-service healthz check failed with error: ${e}`,
+        error: `verification-service healthz check failed with error: ${e}`,
         healthy: false
       })
     }
@@ -52,10 +54,10 @@ export async function build() {
       if (!req.body || !Object.keys(req.body).length) {
         throw new VerificationException(
           400,
-          'A verifiable credential must be provided in the body.'
+          'A verifiableCredential property must be provided in the body and it must contain a verifiable credential.'
         )
       }
-      const verificationResult = await verify(vc)
+      const verificationResult = await verifyCredential(vc)
       return res.json(verificationResult)
     } catch (e) {
       // catch the async errors and pass them to the error logger and handler

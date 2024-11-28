@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import request from 'supertest'
 
 import { build } from './app.js'
+import { getConfig, setConfig } from './config.js'
 
 let app
 
@@ -48,10 +49,13 @@ describe('api', () => {
 
     describe('/healthz fail', () => {
       // to force an error with the health check, we remove the
-      // test issuer instance and it's signing seed
+      // registries list
 
       beforeEach(async () => {
-        // need to do something here to make health check fail
+        getConfig().registries = []
+      })
+      afterEach(async () => {
+        setConfig()
       })
 
       it('returns 503 when not healthy', async () => {
@@ -59,8 +63,6 @@ describe('api', () => {
           .get(`/healthz`)
           .expect('Content-Type', /json/)
           .expect((res) => {
-            console.log('the body:')
-            console.log(res.body)
             expect(res.body.error).to.contain('error')
           })
           .expect(503)

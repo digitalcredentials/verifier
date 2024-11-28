@@ -1,11 +1,9 @@
 import { Ed25519Signature2020 } from '@digitalbazaar/ed25519-signature-2020'
 //import { purposes } from 'jsonld-signatures'
 import * as vc from '@digitalbazaar/vc'
-//import { VerifiablePresentation, PresentationError } from 'types/presentation.d';
-//import { VerifiableCredential, CredentialError, CredentialErrorTypes } from 'types/credential.d';
 import { securityLoader } from '@digitalcredentials/security-document-loader'
-import { registryCollections } from '@digitalcredentials/issuer-registry-client'
 import { getCredentialStatusChecker } from './credentialStatus.js'
+import { getRelevantRegistryNames } from './getRelevantRegistryNames.js'
 
 const documentLoader = securityLoader({ fetchRemoteContexts: true }).build()
 const suite = new Ed25519Signature2020()
@@ -64,8 +62,6 @@ export async function verifyPresentation(
 }
 
 export async function verifyCredential(credential) {
-  const { issuer } = credential
-
   if (!checkID(credential)) {
     return createFatalErrorResult(
       credential,
@@ -105,7 +101,7 @@ export async function verifyCredential(credential) {
       // Only check revocation status if VC has a 'credentialStatus' property
       checkStatus
     })
-    console.log(JSON.stringify(result))
+    //console.log(JSON.stringify(result))
     result.fatal = false
     if (result?.error?.name === 'VerificationError') {
       return createFatalErrorResult(
@@ -134,14 +130,10 @@ export async function verifyCredential(credential) {
       }
     }
 
-    const issuerDid = typeof issuer === 'string' ? issuer : issuer.id
-    await registryCollections.issuerDid.fetchRegistries()
-    const isInRegistry =
-      await registryCollections.issuerDid.isInRegistryCollection(issuerDid)
-    if (isInRegistry) {
-      const registryInfo =
-        await registryCollections.issuerDid.registriesFor(issuerDid)
-      result.registryName = registryInfo[0].name
+    const { issuer } = credential
+    const registryNames = getRelevantRegistryNames({ issuer })
+    if (registryNames) {
+      result.registryNames = registryNames
     } else {
       result.verified = false
       ;(result.results[0].log ??= []).push({
