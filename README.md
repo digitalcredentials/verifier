@@ -26,7 +26,7 @@ IMPORTANT NOTE ABOUT VERSIONING: If you are using a Docker Hub image of this rep
 
 Use this express server to verify a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) or a [Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations). This is a conforming implemetation of the [VC-API Specification](https://w3c-ccg.github.io/vc-api/).
 
-Implements three http endpoints:
+Implements two [VC-API](https://w3c-ccg.github.io/vc-api/) endpoints:
 
  * POST /credentials/verify
 
@@ -37,6 +37,8 @@ Which verifies a [Verifiable Credential](https://www.w3.org/TR/vc-data-model/) t
  https://w3c-ccg.github.io/vc-api/#verify-presentation
 
 Which verifies a [Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations) that has been posted to it, as defined by the [VC-API Specification](https://w3c-ccg.github.io/vc-api/#verify-presentation)
+
+Also provides a health check endpoint:
 
 * GET /healthz
 
@@ -90,7 +92,7 @@ So that a verifier knows that a credential was signed by a key that is really ow
 
 The DCC provides a number of registries that are pre-configured to work with this verifier. The DCC registries use Github for storage.  To request that your [DID](https://www.w3.org/TR/did-core/) be added to a registry, submit a pull request in which you've added your [DID](https://www.w3.org/TR/did-core/) to the registry file.
 
-You can also use different registries by following the example of the DCC [issuer-registry-client](https://github.com/digitalcredentials/issuer-registry-client) to create your own registry client and then simply import that in package.json.
+You can use different registries by following the examples in the [.knownDidRegistries.js file](.knownDidRegistries.js) to add your own registries and/or remove the DCC registries.
 
 ## Usage
 
