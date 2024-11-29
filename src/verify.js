@@ -10,15 +10,11 @@ const suite = new Ed25519Signature2020()
 //const presentationPurpose = new purposes.AssertionProofPurpose()
 
 const PresentationError = {
-  IsNotVerified: 'Presentation is not verified.',
-  CouldNotBeVerified:
-    'Presentation encoded could not be checked for verification and may be malformed.'
+  CouldNotBeVerified: 'Presentation could not be verified and may be malformed.'
 }
 
 const CredentialErrorTypes = {
-  IsNotVerified: 'Credential is not verified.',
-  CouldNotBeVerified:
-    'Credential could not be checked for verification and may be malformed.',
+  CouldNotBeVerified: ' Credential could not be verified and may be malformed.',
   DidNotInRegistry: 'Could not find issuer in registry with given DID.'
 }
 
@@ -101,7 +97,9 @@ export async function verifyCredential(credential) {
       // Only check revocation status if VC has a 'credentialStatus' property
       checkStatus
     })
-    //console.log(JSON.stringify(result))
+    console.log('results from the verify call:')
+    console.log(JSON.stringify(result))
+
     result.fatal = false
     if (result?.error?.name === 'VerificationError') {
       return createFatalErrorResult(
@@ -142,7 +140,8 @@ export async function verifyCredential(credential) {
       })
       addErrorToResult(result, CredentialErrorTypes.DidNotInRegistry, false)
     }
-
+    // console.log("the result in verify.js:")
+    //  console.log(result)
     return result
   } catch (err) {
     console.warn(err)

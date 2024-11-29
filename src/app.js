@@ -58,7 +58,16 @@ export async function build() {
         )
       }
       const verificationResult = await verifyCredential(vc)
-      return res.json(verificationResult)
+      console.log('verificationResult in app.js /credentials/verify:')
+      console.log(JSON.stringify(verificationResult))
+      if (verificationResult.verified) {
+        return res.json(verificationResult)
+      } else {
+        throw new VerificationException(
+          400,
+          'A verifiableCredential property must be provided in the body and it must contain a verifiable credential.'
+        )
+      }
     } catch (e) {
       // catch the async errors and pass them to the error logger and handler
       next(e)
